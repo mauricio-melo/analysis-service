@@ -1,4 +1,4 @@
-package com.totonero.analysisservice.enumerator;
+package com.totonero.analysisservice.enums;
 
 import lombok.Getter;
 

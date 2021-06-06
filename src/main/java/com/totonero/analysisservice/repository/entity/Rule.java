@@ -9,10 +9,12 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.totonero.analysisservice.enumerator.RuleType;
+import com.totonero.analysisservice.enums.RuleType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -33,8 +35,9 @@ public class Rule {
     @Column(name = "idt_rule")
     private Long id;
 
-    @Column(name = "idt_rule_parent")
-    private Long ruleParentId;
+    @ManyToOne
+    @JoinColumn(name = "idt_bet")
+    private Bet bet;
 
     @Column(name = "rule_type")
     @Enumerated(EnumType.STRING)
