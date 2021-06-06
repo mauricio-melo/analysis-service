@@ -1,14 +1,18 @@
 package com.totonero.analysisservice.service;
 
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.Optional;
 
 import com.totonero.analysisservice.enums.BetType;
 import com.totonero.analysisservice.enums.Period;
 import com.totonero.analysisservice.enums.Rules;
 import com.totonero.analysisservice.integration.service.NotificationClientService;
+import com.totonero.analysisservice.processor.TypeAnalysis;
+import com.totonero.analysisservice.processor.factory.FactoryProcessor;
 import com.totonero.analysisservice.repository.AlertRepository;
 import com.totonero.analysisservice.repository.entity.Alert;
-import com.totonero.analysisservice.repository.entity.Rule;
+import com.totonero.analysisservice.repository.entity.Bet;
+import com.totonero.analysisservice.repository.entity.Entry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,41 +24,77 @@ public class AlertService {
     private final RuleService ruleService;
     private final BetService betService;
     private final NotificationClientService notificationClientService;
+    private final FactoryProcessor factoryProcessor;
+    private final EntryService entryService;
 
-    public Alert save(final Alert alert) {
-        return repository.save(alert);
+    public void analysing(final Rules rule, final Long fixtureId, final BetType betType, final Period period) {
+        save(rule, fixtureId, betType, period);
+        saveAnalyzableRules(fixtureId, betType, period);
+        verifyScore(fixtureId, betType, period);
     }
 
-    public void save(final Rules ruleName, final Long fixtureId, final BetType betType, final Period period) {
-        final Alert alert = save(Alert.builder()
+    public void save(final Rules rule, final Long fixtureId, final BetType betType, final Period period) {
+        final Alert alert = Alert.builder()
                 .fixtureId(fixtureId)
-                .rule(ruleService.findByNameAndBetTypeAndPeriod(ruleName, betType, period))
-                .build());
+                .rule(ruleService.findByNameAndBetTypeAndPeriod(rule, betType, period))
+                .build();
 
-        saveAnalyzableRules(fixtureId, betType, period);
+        findByFixtureIdAndRuleNameAndBetAndPeriod(rule, fixtureId, betType, period)
+                .ifPresent(exists -> alert.setId(exists.getId()));
 
-        if(verifyAlertReachedScore(fixtureId, betType, period)) {
-            if(verifyHasRulesFixedTests()) {
-
-            }
-            notificationClientService.sendMessage("Jogo: " + fixtureId + "\n" +
-                    "Aposta: " + betType + "\n" +
-                    "Mensagem: Fui campeao da libertadores jogando no maracana");
-        }
-
+        repository.save(alert);
     }
 
     private void saveAnalyzableRules(final Long fixtureId, final BetType betType, final Period period) {
-        final List<Rule> analysableRules = ruleService.findAnalysableRulesByBetAndPeriod(betType, period);
+        ruleService.findAnalysableRulesByBetAndPeriod(betType, period)
+                .forEach(rule -> {
+                    final TypeAnalysis typeAnalysis = factoryProcessor.analyseRule(Rules.valueOf(rule.getRuleName()));
+                    typeAnalysis.analysing(fixtureId, betType, period);
+                });
     }
 
-    private boolean verifyHasRulesFixedTests() {
-        return true;
-    }
-
-    private boolean verifyAlertReachedScore(final Long fixtureId, final BetType betType, final Period period) {
-        final int scoreMinimum = betService.findScoreByName(betType, period);
+    private void verifyScore(final Long fixtureId, final BetType betType, final Period period) {
+        final int minimumScore = betService.findScoreByName(betType, period);
         final int fixtureScore = ruleService.getScoreByFixtureIdAndBetType(fixtureId, betType, period);
-        return fixtureScore >= scoreMinimum;
+        if (fixtureScore >= minimumScore) {
+            final Bet bet = betService.findByActualScoreAndPeriodAndBetType(fixtureScore, period, betType);
+            final Long teamId = 100L;
+            final Long leagueId = 78L;
+            final boolean isCup = true;
+
+            entryService.save(Entry.builder()
+                    .bet(bet)
+                    .fixtureId(fixtureId)
+                    .teamId(teamId)
+                    .leagueId(leagueId)
+                    .isCup(isCup)
+                    .score(fixtureScore)
+                    .green(false)
+                    .build());
+
+            notify(fixtureId, BetType.valueOf(bet.getName()), fixtureScore, period);
+        }
+    }
+
+    public Optional<Alert> findByFixtureIdAndRuleNameAndBetAndPeriod(final Rules rule, final Long fixtureId,
+                                                                     final BetType betType, final Period period) {
+        return repository.findByFixtureIdAndRuleNameAndBetAndPeriod(fixtureId, rule.name(), betType.name(), period);
+    }
+
+    private void notify(final Long fixtureId, final BetType betType, int fixtureScore, final Period period) {
+        final String home = "Flamengo";
+        final String away = "Vasco";
+        final String leagueName = "Libertadores";
+        final String goalsHome = "0";
+        final String goalsAway = "3";
+        final String country = "AMERICA";
+
+        notificationClientService.sendMessage("*Jogo:* " + fixtureId + "\n" +
+                "*Partida:* " + home + " " + goalsHome + " x " + goalsAway + " " + away + "\n" +
+                "*Liga:* " + leagueName + "\n" +
+                "*Pais:* " + country + "\n" +
+                "*Tempo de jogo:* " + period.name() + "\n\n" +
+                "*Aposta:* " + betType + "\n" +
+                "*Score:* " + fixtureScore);
     }
 }

@@ -11,8 +11,7 @@ public interface RuleRepository extends JpaRepository<Rule, Long> {
 
     @Query(value = "SELECT r FROM Rule r " +
             "JOIN r.bet b " +
-            "WHERE r.ruleType = 'FIXED' " +
-            "AND r.ruleName = ?1 " +
+            "WHERE r.ruleName = ?1 " +
             "AND b.name = ?2 " +
             "AND b.period = ?3")
     Rule findByNameAndBetAndPeriod(final String name, final String bet, final Period period);

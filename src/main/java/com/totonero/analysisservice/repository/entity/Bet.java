@@ -2,12 +2,14 @@ package com.totonero.analysisservice.repository.entity;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.totonero.analysisservice.enums.Period;
@@ -40,4 +42,7 @@ public class Bet {
 
     @Column(name = "score")
     private int score;
+
+    @OneToMany(mappedBy = "bet")
+    private List<Rule> rules;
 }

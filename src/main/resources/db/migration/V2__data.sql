@@ -76,3 +76,35 @@ VALUES ((SELECT b.idt_bet FROM bet b WHERE b.name = 'RACE' AND b.period = 'SECON
 INSERT INTO rule(idt_bet, rule_type, rule_name, score)
 VALUES ((SELECT b.idt_bet FROM bet b WHERE b.name = 'RACE' AND b.period = 'SECOND_HALF'),
 'ANALYZABLE', 'CUP', 5);
+
+INSERT INTO rule(idt_bet, rule_type, rule_name, score)
+VALUES ((SELECT b.idt_bet FROM bet b WHERE b.name = 'LIMITE' AND b.period = 'SECOND_HALF'),
+'FIXED', 'BALL_POSSESSION_GREATER_THAN_65', 20);
+
+INSERT INTO rule(idt_bet, rule_type, rule_name, score)
+VALUES ((SELECT b.idt_bet FROM bet b WHERE b.name = 'LIMITE' AND b.period = 'SECOND_HALF'),
+'FIXED', 'CORNER_GREATER_THAN_5', 20);
+
+INSERT INTO rule(idt_bet, rule_type, rule_name, score)
+VALUES ((SELECT b.idt_bet FROM bet b WHERE b.name = 'LIMITE' AND b.period = 'SECOND_HALF'),
+'FIXED', 'KICKS_GREATER_THAN_10', 20);
+
+INSERT INTO rule(idt_bet, rule_type, rule_name, score)
+VALUES ((SELECT b.idt_bet FROM bet b WHERE b.name = 'LIMITE' AND b.period = 'SECOND_HALF'),
+'FIXED', 'RED_CARD', 10);
+
+INSERT INTO rule(idt_bet, rule_type, rule_name, score)
+VALUES ((SELECT b.idt_bet FROM bet b WHERE b.name = 'LIMITE' AND b.period = 'SECOND_HALF'),
+'FIXED', 'VAR', 5);
+
+INSERT INTO rule(idt_bet, rule_type, rule_name, score)
+VALUES ((SELECT b.idt_bet FROM bet b WHERE b.name = 'LIMITE' AND b.period = 'SECOND_HALF'),
+'ANALYZABLE', 'FAVORITE_TEAM_TYING', 10);
+
+INSERT INTO rule(idt_bet, rule_type, rule_name, score)
+VALUES ((SELECT b.idt_bet FROM bet b WHERE b.name = 'LIMITE' AND b.period = 'SECOND_HALF'),
+'ANALYZABLE', 'FAVORITE_TEAM_LOSING', 15);
+
+INSERT INTO rule(idt_bet, rule_type, rule_name, score)
+VALUES ((SELECT b.idt_bet FROM bet b WHERE b.name = 'LIMITE' AND b.period = 'SECOND_HALF'),
+'ANALYZABLE', 'CUP', 5);
