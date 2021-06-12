@@ -1,11 +1,11 @@
-package com.totonero.analysisservice.processor.factory.impl;
+package com.totonero.analysisservice.service.analysing.factory.impl;
 
 import java.text.MessageFormat;
 
 import com.totonero.analysisservice.enums.Rules;
 import com.totonero.analysisservice.exceptions.TypeNotFound;
-import com.totonero.analysisservice.processor.TypeAnalysis;
-import com.totonero.analysisservice.processor.factory.FactoryProcessor;
+import com.totonero.analysisservice.service.analysing.processor.TypeAnalysis;
+import com.totonero.analysisservice.service.analysing.factory.FactoryProcessor;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;

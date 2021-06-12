@@ -15,6 +15,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.totonero.analysisservice.enums.RuleType;
+import com.totonero.analysisservice.enums.Rules;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -44,7 +45,8 @@ public class Rule {
     private RuleType ruleType;
 
     @Column(name = "rule_name")
-    private String ruleName;
+    @Enumerated(EnumType.STRING)
+    private Rules ruleName;
 
     @Column(name = "score")
     private int score;

@@ -1,8 +1,8 @@
-package com.totonero.analysisservice.integration.client;
+package com.totonero.analysisservice.integration.notification.client;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-import com.totonero.analysisservice.integration.dto.MessageRequestDTO;
+import com.totonero.analysisservice.integration.notification.request.MessageRequestDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

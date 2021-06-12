@@ -1,4 +1,4 @@
-package com.totonero.analysisservice.integration.dto;
+package com.totonero.analysisservice.integration.notification.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

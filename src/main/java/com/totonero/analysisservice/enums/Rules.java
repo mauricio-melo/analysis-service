@@ -17,5 +17,4 @@ public enum Rules {
     CUP,
     CORNER_GREATER_THAN_5,
     KICKS_GREATER_THAN_10
-
 }

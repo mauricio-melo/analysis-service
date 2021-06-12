@@ -1,13 +1,10 @@
 package com.totonero.analysisservice.service;
 
-import java.util.List;
-import java.util.Optional;
-
-import com.totonero.analysisservice.enums.BetType;
-import com.totonero.analysisservice.enums.Period;
+import com.totonero.analysisservice.domain.EntryDTO;
 import com.totonero.analysisservice.repository.EntryRepository;
 import com.totonero.analysisservice.repository.entity.Entry;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,12 +12,10 @@ import org.springframework.stereotype.Service;
 public class EntryService {
 
     private final EntryRepository repository;
+    private final ModelMapper modelMapper;
 
-    public void save(final Entry entry) {
-        repository.save(entry);
+    public void save(final EntryDTO entry) {
+        repository.save(modelMapper.map(entry, Entry.class));
     }
 
-    public Optional<Entry> findByFixtureIdAndBetAndPeriod(final Long fixtureId, final BetType betType, final Period period) {
-        return repository.findByFixtureIdAndBetAndPeriod(fixtureId, betType.name(), period);
-    }
 }
